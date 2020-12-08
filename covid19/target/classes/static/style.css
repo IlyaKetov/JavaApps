@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, Verdana, sans-serif; /* Рубленый шрифт для текста */
+    font-size: 125%;
+    background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+}
+
+.table_sort th {
+    cursor: pointer;
+}
+
+th.sorted[data-order="1"],
+th.sorted[data-order="-1"] {
+    position: relative;
+}
+
+th.sorted[data-order="1"]::after,
+th.sorted[data-order="-1"]::after {
+    right: 8px;
+    position: absolute;
+}
+
+th.sorted[data-order="-1"]::after {
+    content: "▼"
+}
+
+th.sorted[data-order="1"]::after {
+    content: "▲"
+}

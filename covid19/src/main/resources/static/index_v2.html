@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Covid19Info</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, Verdana, sans-serif; /* Рубленый шрифт для текста */
+            font-size: 125%;
+            background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+        }
+    </style>
+</head>
+<body>
+<center><div id="current_date_time_block", class="container h2">
+
+    <script type="text/javascript">
+
+    /* функция добавления ведущих нулей */
+    /* (если число меньше десяти, перед числом добавляем ноль) */
+    function zero_first_format(value)
+    {
+        if (value < 10)
+        {
+            value='0'+value;
+        }
+        return value;
+    }
+
+    /* функция получения текущей даты и времени */
+    function date_time()
+    {
+        var current_datetime = new Date();
+        var day = zero_first_format(current_datetime.getDate());
+        var month = zero_first_format(current_datetime.getMonth()+1);
+        var year = current_datetime.getFullYear();
+        var hours = zero_first_format(current_datetime.getHours());
+        var minutes = zero_first_format(current_datetime.getMinutes());
+        var seconds = zero_first_format(current_datetime.getSeconds());
+
+        return day+"."+month+"."+year+" "+hours+":"+minutes+":"+seconds;
+    }
+
+    /* выводим текущую дату и время на сайт в блок с id "current_date_time_block" */
+    document.getElementById('current_date_time_block').innerHTML = date_time();
+    </script></div></center>
+s
+    <div class="container justify-content-center">
+        <div class="row">
+            <table class="table align-middle", id="allList"></table>
+        </div>
+    </div>
+    <p><img class="mx-auto d-block" src="covid.jpg" alt="Covid" style="width:50%"></p>
+    <div class="container"><table class="table", id="usersList"></table></div>
+
+    <script>
+        function loadUsers() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var summary = JSON.parse(this.responseText);
+                var html = '<tr>\n' +
+                ' <th>Country</th>\n' +
+                ' <th>New confirmed</th>\n' +
+                ' <th>Total confirmed</th>\n' +
+                ' <th>New deaths</th>\n' +
+                ' <th>Total deaths</th></tr>';
+
+                var countries = summary.Countries;
+                for (var i = 0; i < countries.length; i++) {
+                var country = countries[i];
+                console.log(country);
+                html = html + '<tr><td>' + country.Country + '</td>\n' +
+                ' <td>' + numWithSpaces(country.NewConfirmed)+ '</td>\n' +
+                ' <td>' + numWithSpaces(country.TotalConfirmed)+ '</td>\n' +
+                ' <td>' + numWithSpaces(country.NewDeaths)+ '</td>\n' +
+                ' <td>' + numWithSpaces(country.TotalDeaths)+ '</td></tr>';
+                }
+                document.getElementById("usersList").innerHTML = html;
+
+                html = '<tr>\n' +
+                ' <th>New confirmed</th>\n' +
+                ' <th>Total confirmed</th>\n' +
+                ' <th>Total deaths</th>'+
+                ' <th>Total recovered</th></tr>';
+                var global = summary.Global;
+                console.log(global);
+                html = html + '<tr><td>' + numWithSpaces(global.NewConfirmed)  + '</td>\n' +
+                ' <td>' + numWithSpaces(global.TotalConfirmed) + '</td>\n' +
+                ' <td>' + numWithSpaces(global.TotalDeaths) + '</td>\n' +
+                ' <td>' + numWithSpaces(global.TotalRecovered) + '</td></tr>';
+
+                document.getElementById("allList").innerHTML = html;
+                }
+            };
+            xhttp.open("GET", "http://localhost:8080/request/summary", true);
+            xhttp.send();
+        }
+        function numWithSpaces(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+        loadUsers();
+    </script>
+</body>
+</html>
